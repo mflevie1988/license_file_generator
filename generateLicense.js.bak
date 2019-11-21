@@ -1,0 +1,48 @@
+const licenseFile = require('nodejs-license-file');
+const http = require('http');
+
+http.createServer(function(req, res){
+    const template = [
+    '====BEGIN LICENSE====',
+    '{{&licenseVersion}}',
+    '{{&applicationVersion}}',
+    '{{&firstName}}',
+    '{{&lastName}}',
+    '{{&email}}',
+    '{{&client}}',
+    '{{&expirationDate}}',
+    '{{&serial}}',
+    '=====END LICENSE====='
+].join('\n');
+
+try {
+
+    const licenseFileContent = licenseFile.generate({
+        privateKeyPath: '/var/www/html/apmais/keys/private_key.pem',
+        template,
+        data: {
+            licenseVersion: '1',
+            applicationVersion: '1.0.0',
+            firstName: 'Marius',
+            lastName: 'Ivan',
+            email: 'ivan@majestic.com.au',
+            client: 'AP',
+            expirationDate: '08/10/2018'
+        }
+    });
+    console.log(licenseFileContent);
+    res.writeHead(200, {'content-type':'text/plain'});
+    res.end(licenseFileContent);
+} catch (err) {
+
+    console.log(err);
+    res.writeHead(200, {'content-type':'text/plain'});
+    res.end('Error creating the file');
+
+}
+    
+}).listen(9001);
+
+console.log('Server is running on port 9001');
+ 
+
